@@ -81,8 +81,8 @@ func (bc *Blockchain) AddBlock(data string) {
 	}
 }
 
-func NewGenesisBlock() *Block {
-	return NewBlock("Genesis", []byte{})
+func NewGenesisBlock(coinbase *Transaction) *Block {
+	return NewBlock([]*Transaction{coinbase}, []byte{})
 }
 
 func NewBlockchain() *Blockchain {

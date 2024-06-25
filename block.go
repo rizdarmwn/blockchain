@@ -9,15 +9,15 @@ import (
 )
 
 type Block struct {
-	Hash      []byte
-	Prev      []byte
-	Data      []byte
-	Timestamp int64
-	Nonce     int
+	Hash         []byte
+	Prev         []byte
+	Transactions []*Transaction
+	Timestamp    int64
+	Nonce        int
 }
 
-func NewBlock(data string, prevHash []byte) *Block {
-	block := &Block{Data: []byte(data), Prev: prevHash, Timestamp: time.Now().Unix()}
+func NewBlock(transactions []*Transaction, prevHash []byte) *Block {
+	block := &Block{Transactions: transactions, Prev: prevHash, Timestamp: time.Now().Unix()}
 	pow := NewProofOfWork(block)
 	nonce, hash := pow.Run()
 
@@ -33,6 +33,19 @@ func (b *Block) CreateHash() {
 	hash := sha256.Sum256(headers)
 
 	b.Hash = hash[:]
+}
+
+func (b *Block) HashTransactions() []byte {
+	var txHashes [][]byte
+	var txHash [32]byte
+
+	for _, tx := range b.Transactions {
+		txHashes = append(txHashes, tx.ID)
+	}
+
+	txHash = sha256.Sum256(bytes.Join(txHashes, []byte{}))
+
+	return txHash[:]
 }
 
 func (b *Block) Serialize() []byte {
