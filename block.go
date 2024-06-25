@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/gob"
-	"strconv"
 	"time"
 )
 
@@ -25,14 +24,6 @@ func NewBlock(transactions []*Transaction, prevHash []byte) *Block {
 	block.Nonce = nonce
 
 	return block
-}
-
-func (b *Block) CreateHash() {
-	timestamp := []byte(strconv.FormatInt(b.Timestamp, 10))
-	headers := bytes.Join([][]byte{b.Prev, b.Data, timestamp}, []byte{})
-	hash := sha256.Sum256(headers)
-
-	b.Hash = hash[:]
 }
 
 func (b *Block) HashTransactions() []byte {
